@@ -1,0 +1,67 @@
+
+
+def number2word(num):
+    to10 = ['Zero', 'One',  'Two', 'Three', 'Four', 'Five',
+            'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+            'Eleven', 'Twelve', 'Thirteen', 'Fourteen',
+            'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen',
+            'Nineteen']
+    tens = ['0', '10', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty',
+           'Seventy', 'Eighty', 'Ninety']
+
+    def helper(n):
+        ans = []
+        if n == 0:
+            return []
+        elif n < 20:
+            ans.append(to10[n])
+        elif n < 100:
+            ans += [tens[n//10]] + helper(n%10)
+        elif n < 1000:
+            ans += helper(n//100) + ['Hundred'] + helper(n%100)
+        elif n < 10**6:
+            ans += helper(n//1000) + ['Thousand'] + helper(n%1000)
+        elif n < 10**9:
+            ans += helper(n//10**6) + ['Million'] + helper(n%10**6)
+        else:
+            ans += helper(n//10**9) + ['Billion'] + helper(n%10**9)
+
+        return ans
+
+    if num == 0:
+        return 'Zero'
+
+    ans = helper(num)
+    return ' '.join(ans) 
+    
+    
+def word2number(s):
+    nums = {'Zero': 0, 'One': 1, 'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8, 'Nine': 9, 
+             'Ten': 10, 'Eleven': 11, 'Twelve': 12, 'Thirteen': 13, 'Fourteen': 14, 'Fifteen': 15, 'Sixteen': 16, 
+             'Seventeen': 17, 'Eighteen': 18, 'Nineteen': 19,
+             'Twenty': 20, 'Thirty': 30, 'Forty': 40, 'Fifty': 50, 'Sixty': 60, 'Seventy': 70, 'Eighty': 80, 'Ninety': 90
+            }
+    scales = {"Thousand": 1000, "Million":10**6, "Billion":10**9}
+    ans = []
+    cur = 0
+    for w in s.strip().split():        
+        if w in nums:
+            cur += nums[w]
+        elif w == 'Hundred':
+            cur *= 100
+        elif w in scales:
+            ans.append(cur*scales[w])
+            cur = 0
+    ans.append(cur)
+    return sum(ans)
+
+
+# test
+from random import randint
+
+for i in range(200):
+    n = 2 ** randint(0,32)
+    s = number2word(n)
+    m = word2number(s)
+    if n != m:
+        print(n, m, s)    
